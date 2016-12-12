@@ -78,21 +78,21 @@ int main(){
 	node * temp;
 	root = NULL;
 	insert(&root, 9);
-    insert(&root, 4);
+	insert(&root, 4);
 	insert(&root, 15);
-    insert(&root, 6);
-    insert(&root, 12);
-    printf("Pre Order\n");
-    print_pre_order(root); 
-    printf("In Order\n");
-    print_in_order(root);
-    printf("Pos Order\n");
-    print_pos_order(root);  
+	insert(&root, 6);
+	insert(&root, 12);
+	printf("Pre Order\n");
+	print_pre_order(root); 
+	printf("In Order\n");
+	print_in_order(root);
+	printf("Pos Order\n");
+	print_pos_order(root);  
 
-    temp = search(root, 15);
-    printf("%d\n", temp->data);
+	temp = search(root, 15);
+	printf("%d\n", temp->data);
 
-    delete_tree(root);
+	delete_tree(root);
 
 	return 0;
 }
