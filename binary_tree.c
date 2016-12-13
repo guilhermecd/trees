@@ -19,23 +19,37 @@
 #include <stdlib.h>
 
 #define itemtype int
+#define public
+#define private static
 
-typedef struct bin_tree {
+typedef struct node {
 	itemtype data;
-	struct bin_tree * right;
-	struct bin_tree * left;
-}node;
+	struct node * right;
+	struct node * left;
+}Node;
+
+typedef struct binarytree {
+	void (*insert)(Node ** tree, itemtype val); 
+	Node* (*search)(Node * tree, itemtype val);
+	int (*height) (Node * tree);
+	void (*delete) (Node * tree);	
+	void (*preOrder)(Node * tree);
+	void (*posOrder)(Node * tree);
+	void (*inOrder)(Node * tree);
+	Node * root;
+}BinaryTree;
+
 
 /**
  * createNode allocates a new node with the given value and NULL left and right pointers
  *
  * @param itemtype val, value to insert.
  *
- * @returns a new node, a pointer of type node
+ * @returns a new Node, a pointer of type Node
  */
-node * createNode(itemtype val){
-    node * aux;
-	aux = (node*) calloc(1, sizeof(node));
+private Node * createNode(itemtype val){
+    Node * aux;
+	aux = (Node*) calloc(1, sizeof(Node));
 	aux->left = NULL;
 	aux->right = NULL;
 	aux->data = val;
@@ -45,13 +59,13 @@ node * createNode(itemtype val){
 /**
  * Insert elements in binary tree.
  *
- * @param node ** tree, the root of the tree, is a node type pointer.
+ * @param Node ** tree, the root of the tree, is a Node type pointer.
  * @param itemtype val, value to insert.
  *
  * @returns by parameter the tree with the new element.
  */
-void insert(node ** tree, itemtype val){
-	node *aux = NULL;
+void insert(Node ** tree, itemtype val){
+	Node *aux = NULL;
 	if((*tree) == NULL){
 		*tree = createNode(val);
 		return;
@@ -70,12 +84,12 @@ void insert(node ** tree, itemtype val){
 /**
  * Search elements in binary tree.
  *
- * @param node * tree, the root of the tree, is a node type pointer.
+ * @param Node * tree, the root of the tree, is a Node type pointer.
  * @param itemtype val, value to searched.
  *
- * @returns node type pointer, node referring to found element.
+ * @returns Node type pointer, Node referring to found element.
  */
-node* search(node * tree, itemtype val){
+public Node* search(Node * tree, itemtype val){
 	if (tree == NULL){
 		return  NULL;
 	}
@@ -93,11 +107,11 @@ node* search(node * tree, itemtype val){
 /**
  * height of binary tree.
  *
- * @param node * tree, the root of the tree, is a node type pointer.
+ * @param Node * tree, the root of the tree, is a Node type pointer.
  *
  * @returns a int type, is the height of tree
  */
-int height(node * tree){
+public int height(Node * tree){
     if (tree == NULL)
         return 0;
     int left = height(tree->left);
@@ -108,10 +122,10 @@ int height(node * tree){
 /**
  * Delete and free memory of binary tree.
  *
- * @param node * tree, the root of the tree, is a node type pointer.
+ * @param Node * tree, the root of the tree, is a Node type pointer.
  *
  */
-void delete_tree(node * tree){
+public void delete_tree(Node * tree){
 	if(tree != NULL){
 		delete_tree(tree->left);
 		delete_tree(tree->right);
@@ -122,10 +136,10 @@ void delete_tree(node * tree){
 /**
  * Print binary tree in preorder form.
  *
- * @param node * tree, the root of the tree, is a node type pointer.
+ * @param Node * tree, the root of the tree, is a Node type pointer.
  *
  */
-void print_pre_order(node * tree) {
+public void print_pre_order(Node * tree) {
 	if(tree != NULL){
 		printf("%d ", tree->data);					
 		print_pre_order(tree->left);
@@ -136,10 +150,10 @@ void print_pre_order(node * tree) {
 /**
  * Print binary tree in inorder form.
  *
- * @param node * tree, the root of the tree, is a node type pointer.
+ * @param Node * tree, the root of the tree, is a Node type pointer.
  *
  */
-void print_in_order(node * tree) {
+public void print_in_order(Node * tree) {
 	if(tree != NULL){
 		print_in_order(tree->left);		
 		printf("%d ", tree->data);					
@@ -150,10 +164,10 @@ void print_in_order(node * tree) {
 /**
  * Print binary tree in posorder form.
  *
- * @param node * tree, the root of the tree, is a node type pointer.
+ * @param Node * tree, the root of the tree, is a Node type pointer.
  *
  */
-void print_pos_order(node * tree) {
+public void print_pos_order(Node * tree) {
 	if(tree != NULL){
 		print_pos_order(tree->left);	
 		print_pos_order(tree->right);				
@@ -162,37 +176,56 @@ void print_pos_order(node * tree) {
 }
 
 /**
+ * method constructor
+ *
+ * @returns a new BinaryTree type
+ */
+public BinaryTree binarytree(){
+	BinaryTree new_bt;
+	new_bt.insert = &insert;
+	new_bt.search = &search;	
+	new_bt.height = &height;
+	new_bt.delete = &delete_tree;
+	new_bt.preOrder = &print_pre_order;
+	new_bt.posOrder = &print_pos_order;
+	new_bt.inOrder = &print_in_order;	
+	new_bt.root = NULL;
+	return new_bt;
+}
+
+/**
  * Main program
  *
  */
 int main(){
-	node *root = NULL;
-	node * temp;
+	Node * temp;
+
+	BinaryTree tree = binarytree();
 	int h = 0;
 
-	insert(&root, 9);
-	insert(&root, 4);
-	insert(&root, 15);
-	insert(&root, 6);
-	insert(&root, 12);
+	tree.insert(&tree.root, 9);
+	tree.insert(&tree.root, 4);
+	tree.insert(&tree.root, 15);
+	tree.insert(&tree.root, 6);
+	tree.insert(&tree.root, 12);
 
 	printf("Pre Order\n");
-	print_pre_order(root); 
+	tree.preOrder(tree.root); 
 	printf("\n\n");	
 	printf("In Order\n");
-	print_in_order(root);
+	tree.inOrder(tree.root); 
 	printf("\n\n");	
 	printf("Pos Order\n");
-	print_pos_order(root); 
+	tree.posOrder(tree.root); 
 	printf("\n\n");	 
 
-	temp = search(root, 15);
+	temp = tree.search(tree.root, 12); 
 	printf("Found element %d\n", temp->data);
 
-	h = height(root);
+	h = tree.height(tree.root); 
 	printf("height: %d\n", h);
 
-	delete_tree(root);
+	tree.delete(tree.root);
 
 	return 0;
 }
