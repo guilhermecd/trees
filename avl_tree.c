@@ -53,8 +53,9 @@ Node* createNode(itemtype value){
  * @returns a integer type, is the height of tree 
  */
 int height(Node * tree){
-    if (tree == NULL)
+    if (tree == NULL){
         return 0;
+    }
     return tree->height;
 }
 
@@ -78,8 +79,9 @@ int max(int a, int b){
  * @returns a integer type, is the balance factor of a node 
  */
 int getBalance(Node * tree){
-    if (tree == NULL)
+    if (tree == NULL){
         return 0;
+    }
     return height(tree->left) - height(tree->right);
 }
 
