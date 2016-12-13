@@ -20,6 +20,8 @@
 #include <stdlib.h>
 
 #define itemtype int
+#define public
+#define private static
 
 typedef struct node{
     itemtype data;
@@ -28,6 +30,18 @@ typedef struct node{
     int height;
 }Node;
 
+typedef struct avltree {
+	void (*insert)(Node ** tree, itemtype value);
+	Node* (*search)(Node * tree, itemtype value);
+	int (*height) (Node ** tree);
+	void (*delete) (Node * tree);	
+	void (*preOrder)(Node * tree);
+	void (*posOrder)(Node * tree);
+	void (*inOrder)(Node * tree);
+	Node * root;
+}AvlTree;
+
+
 /**
  * createNode allocates a new node with the given value and NULL left and right pointers
  *
@@ -35,7 +49,7 @@ typedef struct node{
  *
  * @returns a new node, a pointer of type node
  */
-Node* createNode(itemtype value){
+private Node* createNode(itemtype value){
     Node* aux;
     aux = (Node*) calloc(1, sizeof(Node));
     aux->data = value;
@@ -52,11 +66,11 @@ Node* createNode(itemtype value){
  *
  * @returns a integer type, is the height of tree 
  */
-int height(Node * tree){
-    if (tree == NULL){
+public int height(Node ** tree){
+    if ((*tree) == NULL){
         return 0;
     }
-    return tree->height;
+    return (*tree)->height;
 }
 
 /**
@@ -67,7 +81,7 @@ int height(Node * tree){
  *
  * @returns a integer type, is the highest value between two integers
  */ 
-int max(int a, int b){
+private int max(int a, int b){
     return (a > b)? a : b;
 }
 
@@ -78,50 +92,49 @@ int max(int a, int b){
  *
  * @returns a integer type, is the balance factor of a node 
  */
-int getBalance(Node * tree){
-    if (tree == NULL){
+private int getBalance(Node ** tree){
+    if ((*tree) == NULL){
         return 0;
     }
-    return height(tree->left) - height(tree->right);
+    return height(&(*tree)->left) - height(&(*tree)->right);
 }
 
 /**
  * Right Rotate 
  *
- * @param Node * tree, the root of the tree, is a Node type pointer.
+ * @param Node ** tree, the root of the tree, is a Node type pointer.
  *
- * @returns a pointer of Node. Returns the old tree but with right rotation
+ * @returns by parameter a new tree with a right rotate.
  */
-Node * rightRotate( Node * tree){
-    Node * tree_balance = tree->left;
+private void rightRotate( Node ** tree){
+    Node * tree_balance = (*tree)->left;
     Node * aux = tree_balance->right;
 
-    tree_balance->right = tree;
-    tree->left = aux;
+    tree_balance->right = (*tree);
+    (*tree)->left = aux;
  
-    tree->height = max(height(tree->left), height(tree->right))+1;
-    tree_balance->height = max(height(tree_balance->left), height(tree_balance->right))+1;
- 
-    return tree_balance;
+    (*tree)->height = max(height(&(*tree)->left), height(&(*tree)->right))+1;
+    tree_balance->height = max(height(&tree_balance->left), height(&tree_balance->right))+1;
+ 	(*tree) = tree_balance;
 }
 
 /**
  * Left Rotate 
  *
- * @param Node * tree, the root of the tree, is a Node type pointer.
+ * @param Node ** tree, the root of the tree, is a Node type pointer.
  *
- * @returns a pointer of Node. Returns the old tree but with left rotation
+ * @returns by parameter a new tree with a left rotate.
  */
-Node * leftRotate(Node * tree){
-    Node * tree_balance = tree->right;
+private void leftRotate(Node ** tree){
+    Node * tree_balance = (*tree)->right;
     Node * aux = tree_balance->left;
  
-    tree_balance->left = tree;
-    tree->right = aux;
+    tree_balance->left = (*tree);
+    (*tree)->right = aux;
  
-    tree->height = max(height(tree->left), height(tree->right))+1;
-    tree_balance->height = max(height(tree_balance->left), height(tree_balance->right))+1;
-    return tree_balance;
+    (*tree)->height = max(height(&(*tree)->left), height(&(*tree)->right))+1;
+    tree_balance->height = max(height(&tree_balance->left), height(&tree_balance->right))+1;
+    (*tree) = tree_balance;
 }
  
 /**
@@ -132,40 +145,46 @@ Node * leftRotate(Node * tree){
  *
  * @returns by parameter the tree with the new element.
  */
-Node* insert(Node* tree, itemtype value){
-    if (tree == NULL){
-        return(createNode(value));
+public void insert(Node ** tree, itemtype value){
+	int balance;
+    if ((*tree) == NULL){
+        *tree = (createNode(value));
+        return;
     }
-    if (value < tree->data){
-        tree->left  = insert(tree->left, value);
+    if (value < (*tree)->data){
+        insert(&(*tree)->left, value);
     }
-    else if (value > tree->data){
-        tree->right = insert(tree->right, value);
+    else if (value > (*tree)->data){
+        insert(&(*tree)->right, value);
     }
     else{
-        return tree;
+        return;
     }
 
-    tree->height = 1 + max(height(tree->left), height(tree->right));
+    (*tree)->height = 1 + max(height(&(*tree)->left), height(&(*tree)->right));
 
-    int balance = getBalance(tree);
+    balance = getBalance(&(*tree));
  
-    if (balance > 1 && value < tree->left->data){
-        return rightRotate(tree);
+    if (balance > 1 && value < (*tree)->left->data){
+        rightRotate(&(*tree));
+        return;
     }
-    if (balance < -1 && value > tree->right->data){
-        return leftRotate(tree);
+    if (balance < -1 && value > (*tree)->right->data){
+        leftRotate(&(*tree));
+        return;
     }
-    if (balance > 1 && value > tree->left->data){
-        tree->left =  leftRotate(tree->left);
-        return rightRotate(tree);
+    if (balance > 1 && value > (*tree)->left->data){
+        leftRotate(&(*tree)->left);
+        rightRotate(&(*tree));
+        return;
     }
-    if (balance < -1 && value < tree->right->data){
-        tree->right = rightRotate(tree->right);
-        return leftRotate(tree);
+    if (balance < -1 && value < (*tree)->right->data){
+      	rightRotate(&(*tree)->right);
+        leftRotate(&(*tree));
+		return;
     }
 
-    return tree;
+    // return tree;
 }
 
 /**
@@ -176,7 +195,7 @@ Node* insert(Node* tree, itemtype value){
  *
  * @returns node type pointer, node referring to found element.
  */
-Node* search(Node * tree, itemtype value){
+public Node* search(Node * tree, itemtype value){
 	if (tree == NULL){
 		return  NULL;
 	}
@@ -197,7 +216,7 @@ Node* search(Node * tree, itemtype value){
  * @param node * tree, the root of the tree, is a node type pointer.
  *
  */
-void delete_tree(Node * tree){
+public void delete_tree(Node * tree){
 	if(tree != NULL){
 		delete_tree(tree->left);
 		delete_tree(tree->right);
@@ -211,7 +230,7 @@ void delete_tree(Node * tree){
  * @param node * tree, the root of the tree, is a node type pointer.
  *
  */
-void print_pre_order(Node * tree) {
+public void print_pre_order(Node * tree) {
 	if(tree != NULL){
 		printf("%d ", tree->data);
 		print_pre_order(tree->left);
@@ -225,7 +244,7 @@ void print_pre_order(Node * tree) {
  * @param node * tree, the root of the tree, is a node type pointer.
  *
  */
-void print_in_order(Node * tree) {
+public void print_in_order(Node * tree) {
 	if(tree != NULL){
 		print_in_order(tree->left);		
 		printf("%d ", tree->data);
@@ -239,7 +258,7 @@ void print_in_order(Node * tree) {
  * @param node * tree, the root of the tree, is a node type pointer.
  *
  */
-void print_pos_order(Node * tree) {
+public void print_pos_order(Node * tree) {
 	if(tree != NULL){
 		print_pos_order(tree->left);	
 		print_pos_order(tree->right);				
@@ -247,38 +266,59 @@ void print_pos_order(Node * tree) {
 	}
 }
 
+
+/**
+ * method constructor
+ *
+ * @returns a new BinaryTree type
+ */
+public AvlTree avltree(){
+	AvlTree new_avl;
+	new_avl.insert = &insert;
+	new_avl.search = &search;	
+	new_avl.height = &height;
+	new_avl.delete = &delete_tree;
+	new_avl.preOrder = &print_pre_order;
+	new_avl.posOrder = &print_pos_order;
+	new_avl.inOrder = &print_in_order;	
+	new_avl.root = NULL;
+	return new_avl;
+}
+
 /**
  * Main program
  *
  */
 int main(){
-	Node * root = NULL;
- 	Node * temp;
- 	int h;
+	Node * temp;
 
-	root = insert(root, 11);
-	root = insert(root, 12);
-	root = insert(root, 14);
-	root = insert(root, 15);
-	root = insert(root, 16);
-	root = insert(root, 13);
+	AvlTree tree = avltree();
+	int h = 0;
+
+	tree.insert(&tree.root, 11);
+	tree.insert(&tree.root, 12);
+	tree.insert(&tree.root, 14);
+	tree.insert(&tree.root, 15);
+	tree.insert(&tree.root, 16);
+	tree.insert(&tree.root, 13);
 
 	printf("Pre Order\n");
-	print_pre_order(root);
-	printf("\n\n");
+	tree.preOrder(tree.root); 
+	printf("\n\n");	
 	printf("In Order\n");
-	print_in_order(root);
-	printf("\n\n");
-	printf("Pos Order\n");	
-	print_pos_order(root);
-	printf("\n\n");
+	tree.inOrder(tree.root); 
+	printf("\n\n");	
+	printf("Pos Order\n");
+	tree.posOrder(tree.root); 
+	printf("\n\n");	 
 
- 	temp = search(root, 10);
+	temp = tree.search(tree.root, 12); 
 	printf("Found element %d\n", temp->data);
 
-	h = height(root);
+	h = tree.height(&tree.root); 
 	printf("height: %d\n", h);
 
- 	delete_tree(root);
+	tree.delete(tree.root);
+
 	return 0;
 }
