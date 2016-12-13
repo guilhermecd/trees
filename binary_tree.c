@@ -48,12 +48,12 @@ typedef struct binarytree {
  * @returns a new Node, a pointer of type Node
  */
 private Node * createNode(itemtype val){
-    Node * aux;
+	Node * aux;
 	aux = (Node*) calloc(1, sizeof(Node));
 	aux->left = NULL;
 	aux->right = NULL;
 	aux->data = val;
-    return aux;
+	return aux;
 }
 
 /**
@@ -112,11 +112,11 @@ public Node* search(Node * tree, itemtype val){
  * @returns a int type, is the height of tree
  */
 public int height(Node * tree){
-    if (tree == NULL)
-        return 0;
-    int left = height(tree->left);
-    int right = height(tree->right);
-    return (left > right) ? left + 1 : right + 1;
+	if (tree == NULL)
+		return 0;
+	int left = height(tree->left);
+	int right = height(tree->right);
+	return (left > right) ? left + 1 : right + 1;
 }
 
 /**

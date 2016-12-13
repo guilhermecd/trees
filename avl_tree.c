@@ -24,10 +24,10 @@
 #define private static
 
 typedef struct node{
-    itemtype data;
-    struct node *left;
-    struct node *right;
-    int height;
+	itemtype data;
+	struct node *left;
+	struct node *right;
+	int height;
 }Node;
 
 typedef struct avltree {
@@ -41,7 +41,6 @@ typedef struct avltree {
 	Node * root;
 }AvlTree;
 
-
 /**
  * createNode allocates a new node with the given value and NULL left and right pointers
  *
@@ -50,13 +49,13 @@ typedef struct avltree {
  * @returns a new node, a pointer of type node
  */
 private Node* createNode(itemtype value){
-    Node* aux;
-    aux = (Node*) calloc(1, sizeof(Node));
-    aux->data = value;
-    aux->left = NULL;
-    aux->right = NULL;
-    aux->height = 1;
-    return aux;
+	Node* aux;
+	aux = (Node*) calloc(1, sizeof(Node));
+	aux->data = value;
+	aux->left = NULL;
+	aux->right = NULL;
+	aux->height = 1;
+	return aux;
 }
 
 /**
@@ -67,10 +66,10 @@ private Node* createNode(itemtype value){
  * @returns a integer type, is the height of tree 
  */
 public int height(Node ** tree){
-    if ((*tree) == NULL){
-        return 0;
-    }
-    return (*tree)->height;
+	if ((*tree) == NULL){
+		return 0;
+	}
+	return (*tree)->height;
 }
 
 /**
@@ -82,7 +81,7 @@ public int height(Node ** tree){
  * @returns a integer type, is the highest value between two integers
  */ 
 private int max(int a, int b){
-    return (a > b)? a : b;
+	return (a > b)? a : b;
 }
 
 /**
@@ -93,10 +92,10 @@ private int max(int a, int b){
  * @returns a integer type, is the balance factor of a node 
  */
 private int getBalance(Node ** tree){
-    if ((*tree) == NULL){
-        return 0;
-    }
-    return height(&(*tree)->left) - height(&(*tree)->right);
+	if ((*tree) == NULL){
+		return 0;
+	}
+	return height(&(*tree)->left) - height(&(*tree)->right);
 }
 
 /**
@@ -107,15 +106,15 @@ private int getBalance(Node ** tree){
  * @returns by parameter a new tree with a right rotate.
  */
 private void rightRotate( Node ** tree){
-    Node * tree_balance = (*tree)->left;
-    Node * aux = tree_balance->right;
+	Node * tree_balance = (*tree)->left;
+	Node * aux = tree_balance->right;
 
-    tree_balance->right = (*tree);
-    (*tree)->left = aux;
+	tree_balance->right = (*tree);
+	(*tree)->left = aux;
  
-    (*tree)->height = max(height(&(*tree)->left), height(&(*tree)->right))+1;
-    tree_balance->height = max(height(&tree_balance->left), height(&tree_balance->right))+1;
- 	(*tree) = tree_balance;
+	(*tree)->height = max(height(&(*tree)->left), height(&(*tree)->right))+1;
+	tree_balance->height = max(height(&tree_balance->left), height(&tree_balance->right))+1;
+	(*tree) = tree_balance;
 }
 
 /**
@@ -126,15 +125,15 @@ private void rightRotate( Node ** tree){
  * @returns by parameter a new tree with a left rotate.
  */
 private void leftRotate(Node ** tree){
-    Node * tree_balance = (*tree)->right;
-    Node * aux = tree_balance->left;
+	Node * tree_balance = (*tree)->right;
+	Node * aux = tree_balance->left;
  
-    tree_balance->left = (*tree);
-    (*tree)->right = aux;
+	tree_balance->left = (*tree);
+	(*tree)->right = aux;
  
-    (*tree)->height = max(height(&(*tree)->left), height(&(*tree)->right))+1;
-    tree_balance->height = max(height(&tree_balance->left), height(&tree_balance->right))+1;
-    (*tree) = tree_balance;
+	(*tree)->height = max(height(&(*tree)->left), height(&(*tree)->right))+1;
+	tree_balance->height = max(height(&tree_balance->left), height(&tree_balance->right))+1;
+	(*tree) = tree_balance;
 }
  
 /**
@@ -147,44 +146,44 @@ private void leftRotate(Node ** tree){
  */
 public void insert(Node ** tree, itemtype value){
 	int balance;
-    if ((*tree) == NULL){
-        *tree = (createNode(value));
-        return;
-    }
-    if (value < (*tree)->data){
-        insert(&(*tree)->left, value);
-    }
-    else if (value > (*tree)->data){
-        insert(&(*tree)->right, value);
-    }
-    else{
-        return;
-    }
-
-    (*tree)->height = 1 + max(height(&(*tree)->left), height(&(*tree)->right));
-
-    balance = getBalance(&(*tree));
- 
-    if (balance > 1 && value < (*tree)->left->data){
-        rightRotate(&(*tree));
-        return;
-    }
-    if (balance < -1 && value > (*tree)->right->data){
-        leftRotate(&(*tree));
-        return;
-    }
-    if (balance > 1 && value > (*tree)->left->data){
-        leftRotate(&(*tree)->left);
-        rightRotate(&(*tree));
-        return;
-    }
-    if (balance < -1 && value < (*tree)->right->data){
-      	rightRotate(&(*tree)->right);
-        leftRotate(&(*tree));
+	if ((*tree) == NULL){
+		*tree = (createNode(value));
 		return;
-    }
+	}
+	if (value < (*tree)->data){
+		insert(&(*tree)->left, value);
+	}
+	else if (value > (*tree)->data){
+		insert(&(*tree)->right, value);
+	}
+	else{
+		return;
+	}
 
-    // return tree;
+	(*tree)->height = 1 + max(height(&(*tree)->left), height(&(*tree)->right));
+
+	balance = getBalance(&(*tree));
+ 
+	if (balance > 1 && value < (*tree)->left->data){
+		rightRotate(&(*tree));
+		return;
+	}
+	if (balance < -1 && value > (*tree)->right->data){
+		leftRotate(&(*tree));
+		return;
+	}
+	if (balance > 1 && value > (*tree)->left->data){
+		leftRotate(&(*tree)->left);
+		rightRotate(&(*tree));
+		return;
+	}
+	if (balance < -1 && value < (*tree)->right->data){
+		rightRotate(&(*tree)->right);
+		leftRotate(&(*tree));
+		return;
+	}
+
+	// return tree;
 }
 
 /**
