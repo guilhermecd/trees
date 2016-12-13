@@ -25,8 +25,8 @@
 
 typedef struct node{
 	itemtype data;
-	struct node *left;
-	struct node *right;
+	struct node * left;
+	struct node * right;
 	int height;
 }Node;
 
