@@ -254,12 +254,12 @@ int main(){
  	Node * temp;
  	int h;
 
-	root = insert(root, 10);
-	root = insert(root, 20);
-	root = insert(root, 30);
-	root = insert(root, 40);
-	root = insert(root, 50);
-	root = insert(root, 25);
+	root = insert(root, 11);
+	root = insert(root, 12);
+	root = insert(root, 14);
+	root = insert(root, 15);
+	root = insert(root, 16);
+	root = insert(root, 13);
 
 	printf("Pre Order\n");
 	print_pre_order(root);
