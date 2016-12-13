@@ -64,7 +64,7 @@ private Node * createNode(itemtype val){
  *
  * @returns by parameter the tree with the new element.
  */
-void insert(Node ** tree, itemtype val){
+public void insert(Node ** tree, itemtype val){
 	Node *aux = NULL;
 	if((*tree) == NULL){
 		*tree = createNode(val);
