@@ -27,6 +27,22 @@ typedef struct bin_tree {
 }node;
 
 /**
+ * createNode allocates a new node with the given value and NULL left and right pointers
+ *
+ * @param itemtype val, value to insert.
+ *
+ * @returns a new node, a pointer of type node
+ */
+node * createNode(itemtype val){
+    node * aux;
+	aux = (node*) calloc(1, sizeof(node));
+	aux->left = NULL;
+	aux->right = NULL;
+	aux->data = val;
+    return aux;
+}
+
+/**
  * Insert elements in binary tree.
  *
  * @param node ** tree, the root of the tree, is a node type pointer.
@@ -37,11 +53,7 @@ typedef struct bin_tree {
 void insert(node ** tree, itemtype val){
 	node *aux = NULL;
 	if((*tree) == NULL){
-		aux = (node*) calloc(1, sizeof(node));
-		aux->left = NULL;
-		aux->right = NULL;
-		aux->data = val;
-		*tree = aux;
+		*tree = createNode(val);
 		return;
 	}
 	if(val < (*tree)->data){
@@ -49,6 +61,9 @@ void insert(node ** tree, itemtype val){
 	}
 	else if(val > (*tree)->data){
 		insert(&(*tree)->right, val);
+	}
+	else{
+		return;
 	}
 }
 
@@ -76,6 +91,21 @@ node* search(node * tree, itemtype val){
 }
 
 /**
+ * height of binary tree.
+ *
+ * @param node * tree, the root of the tree, is a node type pointer.
+ *
+ * @returns a int type, is the height of tree
+ */
+int height(node * tree){
+    if (tree == NULL)
+        return 0;
+    int left = height(tree->left);
+    int right = height(tree->right);
+    return (left > right) ? left + 1 : right + 1;
+}
+
+/**
  * Delete and free memory of binary tree.
  *
  * @param node * tree, the root of the tree, is a node type pointer.
@@ -97,7 +127,7 @@ void delete_tree(node * tree){
  */
 void print_pre_order(node * tree) {
 	if(tree != NULL){
-		printf("%d\n", tree->data);
+		printf("%d ", tree->data);					
 		print_pre_order(tree->left);
 		print_pre_order(tree->right);
 	}
@@ -112,7 +142,7 @@ void print_pre_order(node * tree) {
 void print_in_order(node * tree) {
 	if(tree != NULL){
 		print_in_order(tree->left);		
-		printf("%d\n", tree->data);
+		printf("%d ", tree->data);					
 		print_in_order(tree->right);
 	}
 }
@@ -127,7 +157,7 @@ void print_pos_order(node * tree) {
 	if(tree != NULL){
 		print_pos_order(tree->left);	
 		print_pos_order(tree->right);				
-		printf("%d\n", tree->data);					
+		printf("%d ", tree->data);					
 	}
 }
 
@@ -136,24 +166,31 @@ void print_pos_order(node * tree) {
  *
  */
 int main(){
-	node *root;
+	node *root = NULL;
 	node * temp;
-	root = NULL;
+	int h = 0;
+
 	insert(&root, 9);
 	insert(&root, 4);
 	insert(&root, 15);
 	insert(&root, 6);
 	insert(&root, 12);
+
 	printf("Pre Order\n");
 	print_pre_order(root); 
+	printf("\n\n");	
 	printf("In Order\n");
 	print_in_order(root);
+	printf("\n\n");	
 	printf("Pos Order\n");
-	print_pos_order(root);  
+	print_pos_order(root); 
+	printf("\n\n");	 
 
 	temp = search(root, 15);
+	printf("Found element %d\n", temp->data);
 
-	printf("%d\n", temp->data);
+	h = height(root);
+	printf("height: %d\n", h);
 
 	delete_tree(root);
 
