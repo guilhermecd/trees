@@ -168,22 +168,20 @@ public void insert(Node ** tree, itemtype value){
 		rightRotate(&(*tree));
 		return;
 	}
-	if (balance < -1 && value > (*tree)->right->data){
+	else if (balance < -1 && value > (*tree)->right->data){
 		leftRotate(&(*tree));
 		return;
 	}
-	if (balance > 1 && value > (*tree)->left->data){
+	else if (balance > 1 && value > (*tree)->left->data){
 		leftRotate(&(*tree)->left);
 		rightRotate(&(*tree));
 		return;
 	}
-	if (balance < -1 && value < (*tree)->right->data){
+	else if (balance < -1 && value < (*tree)->right->data){
 		rightRotate(&(*tree)->right);
 		leftRotate(&(*tree));
 		return;
 	}
-
-	// return tree;
 }
 
 /**
