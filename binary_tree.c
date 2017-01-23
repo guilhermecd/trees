@@ -131,7 +131,7 @@ private Node * findMinValue(Node * tree){
  * @param Node ** tree, the root of the tree, is a Node type pointer.
  * @param itemtype value, value to insert.
  *
- * @returns by parameter the tree with the new element.
+ * @returns true if element removed or false if element not remove.
  */
 public bool removeNode(Node ** tree, itemtype value){
 	Node * temp;

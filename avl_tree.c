@@ -22,9 +22,10 @@
 #define itemtype int
 #define public
 #define private static
+typedef enum {false, true} bool;
 
 typedef struct node{
-	itemtype data;
+	itemtype value;
 	struct node * left;
 	struct node * right;
 	int height;
@@ -38,6 +39,7 @@ typedef struct avltree {
 	void (*preOrder)(Node * tree);
 	void (*posOrder)(Node * tree);
 	void (*inOrder)(Node * tree);
+	bool (*remove) (Node ** tree, itemtype value);
 	Node * root;
 }AvlTree;
 
@@ -51,7 +53,7 @@ typedef struct avltree {
 private Node* createNode(itemtype value){
 	Node* aux;
 	aux = (Node*) calloc(1, sizeof(Node));
-	aux->data = value;
+	aux->value = value;
 	aux->left = NULL;
 	aux->right = NULL;
 	aux->height = 1;
@@ -96,6 +98,21 @@ private int getBalance(Node ** tree){
 		return 0;
 	}
 	return height(&(*tree)->left) - height(&(*tree)->right);
+}
+
+/**
+ * find the element with a minimum value on the left side.
+ *
+ * @param Node ** tree, the root of the tree, is a Node type pointer.
+ *
+ * @returns by the node referring the minimum element.
+ */
+private Node * findMinValue(Node * tree){
+	if(tree->left == NULL)
+		return tree;
+	else{
+		findMinValue(tree->left);
+	}
 }
 
 /**
@@ -150,10 +167,10 @@ public void insert(Node ** tree, itemtype value){
 		*tree = (createNode(value));
 		return;
 	}
-	if (value < (*tree)->data){
+	if (value < (*tree)->value){
 		insert(&(*tree)->left, value);
 	}
-	else if (value > (*tree)->data){
+	else if (value > (*tree)->value){
 		insert(&(*tree)->right, value);
 	}
 	else{
@@ -164,24 +181,89 @@ public void insert(Node ** tree, itemtype value){
 
 	balance = getBalance(&(*tree));
  
-	if (balance > 1 && value < (*tree)->left->data){
+	if (balance > 1 && value < (*tree)->left->value){
 		rightRotate(&(*tree));
 		return;
 	}
-	else if (balance < -1 && value > (*tree)->right->data){
+	else if (balance < -1 && value > (*tree)->right->value){
 		leftRotate(&(*tree));
 		return;
 	}
-	else if (balance > 1 && value > (*tree)->left->data){
+	else if (balance > 1 && value > (*tree)->left->value){
 		leftRotate(&(*tree)->left);
 		rightRotate(&(*tree));
 		return;
 	}
-	else if (balance < -1 && value < (*tree)->right->data){
+	else if (balance < -1 && value < (*tree)->right->value){
 		rightRotate(&(*tree)->right);
 		leftRotate(&(*tree));
 		return;
 	}
+}
+
+/**
+ * remove elements in Avl tree.
+ *
+ * @param Node ** tree, the root of the tree, is a Node type pointer.
+ * @param itemtype value, value to insert.
+ *
+ * @returns true if element removed or false if element not remove.
+ */
+public bool removeNode(Node ** tree, itemtype value){
+	Node * temp;	
+	int balance;
+
+    if ((*tree) == NULL){
+        return false;
+    }
+    if ( value < (*tree)->value ){
+        removeNode(&(*tree)->left, value);
+    }
+    else if( value > (*tree)->value ){
+        removeNode(&(*tree)->right, value);
+    }
+    else{
+		if((*tree)->right && (*tree)->left){
+           	temp = findMinValue((*tree)->right);
+            (*tree)->value = temp->value;
+            removeNode(&(*tree)->right, temp->value);        	
+        }
+        else{
+			temp = *tree;
+			if((*tree)->left == NULL){
+				*tree = (*tree)->right;
+			}
+			else if((*tree)->right == NULL){
+				*tree = (*tree)->left;
+			}
+			free(temp);
+        }
+    }
+ 
+    if ((*tree) == NULL){
+    	return true;
+    }
+ 
+    (*tree)->height = 1 + max(height(&(*tree)->left),
+                              height(&(*tree)->right));
+
+    balance = getBalance(&(*tree));
+ 
+    if (balance > 1 && getBalance(&(*tree)->left) >= 0){
+        rightRotate(&(*tree));
+    }
+    if (balance > 1 && getBalance(&(*tree)->left) < 0){
+        leftRotate(&(*tree)->left);
+        rightRotate(&(*tree));
+    }
+    if (balance < -1 && getBalance(&(*tree)->right) <= 0){
+        leftRotate(&(*tree));
+    }
+    if (balance < -1 && getBalance(&(*tree)->right) > 0){
+        rightRotate(&(*tree)->right);
+        leftRotate(&(*tree));
+    }
+    return true;
 }
 
 /**
@@ -196,13 +278,13 @@ public Node* search(Node * tree, itemtype value){
 	if (tree == NULL){
 		return  NULL;
 	}
-	else if(value < tree->data){
+	else if(value < tree->value){
 		search(tree->left, value);
 	}
-	else if(value > tree->data){
+	else if(value > tree->value){
 		search(tree->right, value);
 	}
-	else if(value == tree->data){
+	else if(value == tree->value){
 		return tree;
 	}
 }
@@ -229,7 +311,7 @@ public void delete_tree(Node * tree){
  */
 public void print_pre_order(Node * tree) {
 	if(tree != NULL){
-		printf("%d ", tree->data);
+		printf("%d ", tree->value);
 		print_pre_order(tree->left);
 		print_pre_order(tree->right);
 	}
@@ -244,7 +326,7 @@ public void print_pre_order(Node * tree) {
 public void print_in_order(Node * tree) {
 	if(tree != NULL){
 		print_in_order(tree->left);		
-		printf("%d ", tree->data);
+		printf("%d ", tree->value);
 		print_in_order(tree->right);
 	}
 }
@@ -259,7 +341,7 @@ public void print_pos_order(Node * tree) {
 	if(tree != NULL){
 		print_pos_order(tree->left);	
 		print_pos_order(tree->right);				
-		printf("%d ", tree->data);					
+		printf("%d ", tree->value);					
 	}
 }
 
@@ -273,6 +355,7 @@ public AvlTree avltree(){
 	AvlTree new_avl;
 	new_avl.insert = &insert;
 	new_avl.search = &search;	
+	new_avl.remove = &removeNode;	
 	new_avl.height = &height;
 	new_avl.delete = &delete_tree;
 	new_avl.preOrder = &print_pre_order;
@@ -292,12 +375,12 @@ int main(){
 	AvlTree tree = avltree();
 	int h = 0;
 
-	tree.insert(&tree.root, 11);
-	tree.insert(&tree.root, 12);
-	tree.insert(&tree.root, 14);
-	tree.insert(&tree.root, 15);
-	tree.insert(&tree.root, 16);
-	tree.insert(&tree.root, 13);
+	tree.insert(&tree.root, 5);
+	tree.insert(&tree.root, 10);
+	tree.insert(&tree.root, 20);
+	tree.insert(&tree.root, 30);
+	tree.insert(&tree.root, 40);
+	tree.insert(&tree.root, 50);
 
 	printf("Pre Order\n");
 	tree.preOrder(tree.root); 
@@ -309,11 +392,15 @@ int main(){
 	tree.posOrder(tree.root); 
 	printf("\n\n");	 
 
-	temp = tree.search(tree.root, 12); 
-	printf("Found element %d\n", temp->data);
+	temp = tree.search(tree.root, 11); 
+	if(temp != NULL) {
+		printf("Found element %d\n", temp->value);
+	}
 
 	h = tree.height(&tree.root); 
 	printf("height: %d\n", h);
+
+	tree.remove(&tree.root, 10); 
 
 	tree.delete(tree.root);
 
