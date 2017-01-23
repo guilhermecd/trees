@@ -1,19 +1,19 @@
 /*
-	The C programming language includes a very limited standard library in
-	comparison to other modern programming languages.  This is a collection of
-	common Computer Science algorithms which may be used in C projects.
+   The C programming language includes a very limited standard library in
+   comparison to other modern programming languages.  This is a collection of
+   common Computer Science algorithms which may be used in C projects.
 
-	Copyright (C) 2016, Guilherme Castro Diniz.
-	This program is free software; you can redistribute it and/or
-	modify it under the terms of the GNU General Public License as
-	published by the Free Software Foundation (FSF); in version 2 of the
-	license.
-	This program is distributed in the hope that it can be useful,
-	but WITHOUT ANY IMPLIED WARRANTY OF ADEQUATION TO ANY
-	MARKET OR APPLICATION IN PARTICULAR. See the
-	GNU General Public License for more details.
-	<http://www.gnu.org/licenses/>
-*/
+   Copyright (C) 2016, Guilherme Castro Diniz.
+   This program is free software; you can redistribute it and/or
+   modify it under the terms of the GNU General Public License as
+   published by the Free Software Foundation (FSF); in version 2 of the
+   license.
+   This program is distributed in the hope that it can be useful,
+   but WITHOUT ANY IMPLIED WARRANTY OF ADEQUATION TO ANY
+   MARKET OR APPLICATION IN PARTICULAR. See the
+   GNU General Public License for more details.
+   <http://www.gnu.org/licenses/>
+ */
 
 
 #include <stdio.h>
@@ -128,7 +128,7 @@ private void rightRotate( Node ** tree){
 
 	tree_balance->right = (*tree);
 	(*tree)->left = aux;
- 
+
 	(*tree)->height = max(height(&(*tree)->left), height(&(*tree)->right))+1;
 	tree_balance->height = max(height(&tree_balance->left), height(&tree_balance->right))+1;
 	(*tree) = tree_balance;
@@ -144,15 +144,15 @@ private void rightRotate( Node ** tree){
 private void leftRotate(Node ** tree){
 	Node * tree_balance = (*tree)->right;
 	Node * aux = tree_balance->left;
- 
+
 	tree_balance->left = (*tree);
 	(*tree)->right = aux;
- 
+
 	(*tree)->height = max(height(&(*tree)->left), height(&(*tree)->right))+1;
 	tree_balance->height = max(height(&tree_balance->left), height(&tree_balance->right))+1;
 	(*tree) = tree_balance;
 }
- 
+
 /**
  * Insert elements in binary tree.
  *
@@ -180,7 +180,7 @@ public void insert(Node ** tree, itemtype value){
 	(*tree)->height = 1 + max(height(&(*tree)->left), height(&(*tree)->right));
 
 	balance = getBalance(&(*tree));
- 
+
 	if (balance > 1 && value < (*tree)->left->value){
 		rightRotate(&(*tree));
 		return;
@@ -213,22 +213,22 @@ public bool removeNode(Node ** tree, itemtype value){
 	Node * temp;	
 	int balance;
 
-    if ((*tree) == NULL){
-        return false;
-    }
-    if ( value < (*tree)->value ){
-        removeNode(&(*tree)->left, value);
-    }
-    else if( value > (*tree)->value ){
-        removeNode(&(*tree)->right, value);
-    }
-    else{
+	if ((*tree) == NULL){
+		return false;
+	}
+	if ( value < (*tree)->value ){
+		removeNode(&(*tree)->left, value);
+	}
+	else if( value > (*tree)->value ){
+		removeNode(&(*tree)->right, value);
+	}
+	else{
 		if((*tree)->right && (*tree)->left){
-           	temp = findMinValue((*tree)->right);
-            (*tree)->value = temp->value;
-            removeNode(&(*tree)->right, temp->value);        	
-        }
-        else{
+			temp = findMinValue((*tree)->right);
+			(*tree)->value = temp->value;
+			removeNode(&(*tree)->right, temp->value);        	
+		}
+		else{
 			temp = *tree;
 			if((*tree)->left == NULL){
 				*tree = (*tree)->right;
@@ -237,33 +237,33 @@ public bool removeNode(Node ** tree, itemtype value){
 				*tree = (*tree)->left;
 			}
 			free(temp);
-        }
-    }
- 
-    if ((*tree) == NULL){
-    	return true;
-    }
- 
-    (*tree)->height = 1 + max(height(&(*tree)->left),
-                              height(&(*tree)->right));
+		}
+	}
 
-    balance = getBalance(&(*tree));
- 
-    if (balance > 1 && getBalance(&(*tree)->left) >= 0){
-        rightRotate(&(*tree));
-    }
-    if (balance > 1 && getBalance(&(*tree)->left) < 0){
-        leftRotate(&(*tree)->left);
-        rightRotate(&(*tree));
-    }
-    if (balance < -1 && getBalance(&(*tree)->right) <= 0){
-        leftRotate(&(*tree));
-    }
-    if (balance < -1 && getBalance(&(*tree)->right) > 0){
-        rightRotate(&(*tree)->right);
-        leftRotate(&(*tree));
-    }
-    return true;
+	if ((*tree) == NULL){
+		return true;
+	}
+
+	(*tree)->height = 1 + max(height(&(*tree)->left),
+			height(&(*tree)->right));
+
+	balance = getBalance(&(*tree));
+
+	if (balance > 1 && getBalance(&(*tree)->left) >= 0){
+		rightRotate(&(*tree));
+	}
+	if (balance > 1 && getBalance(&(*tree)->left) < 0){
+		leftRotate(&(*tree)->left);
+		rightRotate(&(*tree));
+	}
+	if (balance < -1 && getBalance(&(*tree)->right) <= 0){
+		leftRotate(&(*tree));
+	}
+	if (balance < -1 && getBalance(&(*tree)->right) > 0){
+		rightRotate(&(*tree)->right);
+		leftRotate(&(*tree));
+	}
+	return true;
 }
 
 /**
