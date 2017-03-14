@@ -13,7 +13,7 @@
    MARKET OR APPLICATION IN PARTICULAR. See the
    GNU General Public License for more details.
    <http://www.gnu.org/licenses/>
- */
+*/
 
 #include <stdio.h>
 #include <stdlib.h>
