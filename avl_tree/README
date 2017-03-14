@@ -1,6 +1,6 @@
-#COMPILATION AND EXECUTION
+# COMPILATION AND EXECUTION
 
-+ $ gcc -c avl_tree.c
-+ $ gcc -c avl_tree_example.c
-+ $ gcc avl_tree.o avl_tree_example.o -o test
-+ $ ./test
+$ gcc -c avl_tree.c
+$ gcc -c avl_tree_example.c
+$ gcc avl_tree.o avl_tree_example.o -o test
+$ ./test
