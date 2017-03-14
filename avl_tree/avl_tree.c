@@ -20,8 +20,7 @@
 #include <stdlib.h>
 
 #define itemtype int
-#define public
-#define private static
+
 typedef enum {false, true} bool;
 
 typedef struct node{
@@ -50,7 +49,7 @@ typedef struct avltree {
  *
  * @returns a new node, a pointer of type node
  */
-private Node* createNode(itemtype value){
+Node* createNode(itemtype value){
 	Node* aux;
 	aux = (Node*) calloc(1, sizeof(Node));
 	aux->value = value;
@@ -67,7 +66,7 @@ private Node* createNode(itemtype value){
  *
  * @returns a integer type, is the height of tree 
  */
-public int height(Node ** tree){
+int height(Node ** tree){
 	if ((*tree) == NULL){
 		return 0;
 	}
@@ -82,7 +81,7 @@ public int height(Node ** tree){
  *
  * @returns a integer type, is the highest value between two integers
  */ 
-private int max(int a, int b){
+int max(int a, int b){
 	return (a > b)? a : b;
 }
 
@@ -93,7 +92,7 @@ private int max(int a, int b){
  *
  * @returns a integer type, is the balance factor of a node 
  */
-private int getBalance(Node ** tree){
+int getBalance(Node ** tree){
 	if ((*tree) == NULL){
 		return 0;
 	}
@@ -107,7 +106,7 @@ private int getBalance(Node ** tree){
  *
  * @returns by the node referring the minimum element.
  */
-private Node * findMinValue(Node * tree){
+Node * findMinValue(Node * tree){
 	if(tree->left == NULL)
 		return tree;
 	else{
@@ -122,7 +121,7 @@ private Node * findMinValue(Node * tree){
  *
  * @returns by parameter a new tree with a right rotate.
  */
-private void rightRotate( Node ** tree){
+void rightRotate( Node ** tree){
 	Node * tree_balance = (*tree)->left;
 	Node * aux = tree_balance->right;
 
@@ -141,7 +140,7 @@ private void rightRotate( Node ** tree){
  *
  * @returns by parameter a new tree with a left rotate.
  */
-private void leftRotate(Node ** tree){
+void leftRotate(Node ** tree){
 	Node * tree_balance = (*tree)->right;
 	Node * aux = tree_balance->left;
 
@@ -161,7 +160,7 @@ private void leftRotate(Node ** tree){
  *
  * @returns by parameter the tree with the new element.
  */
-public void insert(Node ** tree, itemtype value){
+void insert(Node ** tree, itemtype value){
 	int balance;
 	if ((*tree) == NULL){
 		*tree = (createNode(value));
@@ -209,7 +208,7 @@ public void insert(Node ** tree, itemtype value){
  *
  * @returns true if element removed or false if element not remove.
  */
-public bool removeNode(Node ** tree, itemtype value){
+bool removeNode(Node ** tree, itemtype value){
 	Node * temp;	
 	int balance;
 
@@ -274,7 +273,7 @@ public bool removeNode(Node ** tree, itemtype value){
  *
  * @returns node type pointer, node referring to found element.
  */
-public Node* search(Node * tree, itemtype value){
+Node* search(Node * tree, itemtype value){
 	if (tree == NULL){
 		return  NULL;
 	}
@@ -295,7 +294,7 @@ public Node* search(Node * tree, itemtype value){
  * @param node * tree, the root of the tree, is a node type pointer.
  *
  */
-public void delete_tree(Node * tree){
+void delete_tree(Node * tree){
 	if(tree != NULL){
 		delete_tree(tree->left);
 		delete_tree(tree->right);
@@ -309,7 +308,7 @@ public void delete_tree(Node * tree){
  * @param node * tree, the root of the tree, is a node type pointer.
  *
  */
-public void print_pre_order(Node * tree) {
+void print_pre_order(Node * tree) {
 	if(tree != NULL){
 		printf("%d ", tree->value);
 		print_pre_order(tree->left);
@@ -323,7 +322,7 @@ public void print_pre_order(Node * tree) {
  * @param node * tree, the root of the tree, is a node type pointer.
  *
  */
-public void print_in_order(Node * tree) {
+void print_in_order(Node * tree) {
 	if(tree != NULL){
 		print_in_order(tree->left);		
 		printf("%d ", tree->value);
@@ -337,7 +336,7 @@ public void print_in_order(Node * tree) {
  * @param node * tree, the root of the tree, is a node type pointer.
  *
  */
-public void print_pos_order(Node * tree) {
+void print_pos_order(Node * tree) {
 	if(tree != NULL){
 		print_pos_order(tree->left);	
 		print_pos_order(tree->right);				
@@ -351,7 +350,7 @@ public void print_pos_order(Node * tree) {
  *
  * @returns a new BinaryTree type
  */
-public AvlTree avltree(){
+AvlTree avltree(){
 	AvlTree new_avl;
 	new_avl.insert = &insert;
 	new_avl.search = &search;	
@@ -363,46 +362,4 @@ public AvlTree avltree(){
 	new_avl.inOrder = &print_in_order;	
 	new_avl.root = NULL;
 	return new_avl;
-}
-
-/**
- * Main program
- *
- */
-int main(){
-	Node * temp;
-
-	AvlTree tree = avltree();
-	int h = 0;
-
-	tree.insert(&tree.root, 5);
-	tree.insert(&tree.root, 10);
-	tree.insert(&tree.root, 20);
-	tree.insert(&tree.root, 30);
-	tree.insert(&tree.root, 40);
-	tree.insert(&tree.root, 50);
-
-	printf("Pre Order\n");
-	tree.preOrder(tree.root); 
-	printf("\n\n");	
-	printf("In Order\n");
-	tree.inOrder(tree.root); 
-	printf("\n\n");	
-	printf("Pos Order\n");
-	tree.posOrder(tree.root); 
-	printf("\n\n");	 
-
-	temp = tree.search(tree.root, 11); 
-	if(temp != NULL) {
-		printf("Found element %d\n", temp->value);
-	}
-
-	h = tree.height(&tree.root); 
-	printf("height: %d\n", h);
-
-	tree.remove(&tree.root, 10); 
-
-	tree.delete(tree.root);
-
-	return 0;
 }
