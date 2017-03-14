@@ -20,8 +20,6 @@
 #include <stdbool.h>
 
 #define itemtype int
-#define public
-#define private static
 
 typedef struct node {
 	itemtype value;
@@ -48,7 +46,7 @@ typedef struct binarytree {
  *
  * @returns a new Node, a pointer of type Node
  */
-private Node * createNode(itemtype value){
+Node * createNode(itemtype value){
 	Node * aux;
 	aux = (Node*) calloc(1, sizeof(Node));
 	aux->left = NULL;
@@ -65,7 +63,7 @@ private Node * createNode(itemtype value){
  *
  * @returns by parameter the tree with the new element.
  */
-public void insert(Node ** tree, itemtype value){
+void insert(Node ** tree, itemtype value){
 	Node *aux = NULL;
 	if((*tree) == NULL){
 		*tree = createNode(value);
@@ -91,7 +89,7 @@ public void insert(Node ** tree, itemtype value){
  *
  * @returns Node type pointer, Node referring to found element.
  */
-public Node* search(Node * tree, itemtype value){
+Node* search(Node * tree, itemtype value){
 	if (tree == NULL){
 		return  NULL;
 	}
@@ -116,7 +114,7 @@ public Node* search(Node * tree, itemtype value){
  *
  * @returns by the node referring the minimum element.
  */
-private Node * findMinValue(Node * tree){
+Node * findMinValue(Node * tree){
 	if(tree->left == NULL)
 		return tree;
 	else{
@@ -133,7 +131,7 @@ private Node * findMinValue(Node * tree){
  *
  * @returns true if element removed or false if element not remove.
  */
-public bool removeNode(Node ** tree, itemtype value){
+bool removeNode(Node ** tree, itemtype value){
 	Node * temp;
 	if(*tree == NULL){
 		return false;
@@ -171,7 +169,7 @@ public bool removeNode(Node ** tree, itemtype value){
  *
  * @returns a int type, is the height of tree
  */
-public int height(Node * tree){
+int height(Node * tree){
 	if (tree == NULL)
 		return 0;
 	int left = height(tree->left);
@@ -185,7 +183,7 @@ public int height(Node * tree){
  * @param Node * tree, the root of the tree, is a Node type pointer.
  *
  */
-public void delete_tree(Node * tree){
+void delete_tree(Node * tree){
 	if(tree != NULL){
 		delete_tree(tree->left);
 		delete_tree(tree->right);
@@ -199,7 +197,7 @@ public void delete_tree(Node * tree){
  * @param Node * tree, the root of the tree, is a Node type pointer.
  *
  */
-public void print_pre_order(Node * tree) {
+void print_pre_order(Node * tree) {
 	if(tree != NULL){
 		printf("%d ", tree->value);					
 		print_pre_order(tree->left);
@@ -213,7 +211,7 @@ public void print_pre_order(Node * tree) {
  * @param Node * tree, the root of the tree, is a Node type pointer.
  *
  */
-public void print_in_order(Node * tree) {
+void print_in_order(Node * tree) {
 	if(tree != NULL){
 		print_in_order(tree->left);		
 		printf("%d ", tree->value);					
@@ -228,7 +226,7 @@ public void print_in_order(Node * tree) {
  * @param Node * tree, the root of the tree, is a Node type pointer.
  *
  */
-public void print_pos_order(Node * tree) {
+void print_pos_order(Node * tree) {
 	if(tree != NULL){
 		print_pos_order(tree->left);	
 		print_pos_order(tree->right);				
@@ -241,7 +239,7 @@ public void print_pos_order(Node * tree) {
  *
  * @returns a new BinaryTree type
  */
-public BinaryTree binarytree(){
+BinaryTree binarytree(){
 	BinaryTree new_bt;
 	new_bt.insert = &insert;
 	new_bt.remove = &removeNode;
@@ -253,47 +251,4 @@ public BinaryTree binarytree(){
 	new_bt.inOrder = &print_in_order;	
 	new_bt.root = NULL;
 	return new_bt;
-}
-
-/**
- * Main program
- *
- */
-int main(){
-	Node * temp;
-
-	BinaryTree tree = binarytree();
-	int h = 0;
-
-	tree.insert(&tree.root, 9);
-	tree.insert(&tree.root, 4);
-	tree.insert(&tree.root, 15);
-	tree.insert(&tree.root, 6);
-	tree.insert(&tree.root, 12);
-	tree.insert(&tree.root, 3);
-	tree.insert(&tree.root, 2);
-
-	printf("Pre Order\n");
-	tree.preOrder(tree.root); 
-	printf("\n\n");	
-	printf("In Order\n");
-	tree.inOrder(tree.root); 
-	printf("\n\n");	
-	printf("Pos Order\n");
-	tree.posOrder(tree.root); 
-	printf("\n\n");	 
-
-	temp = tree.search(tree.root, 12); 
-	printf("Found element %d\n", temp->value);
-
-	h = tree.height(tree.root); 
-	printf("height: %d\n", h);
-
-	tree.remove(&tree.root, 4);
-
-	tree.inOrder(tree.root); 
-	printf("\n\n");		
-	tree.delete(tree.root);
-
-	return 0;
 }
